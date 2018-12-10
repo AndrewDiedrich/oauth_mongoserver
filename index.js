@@ -8,7 +8,7 @@ const app = express();
 
 //route handler
 app.get('/', (req, res) => {
-    res.send({ hi: 'there' });
+    res.send({ hi: 'buddy' });
 });
 
 //production use process.env.port linked to heroku env variable, 
