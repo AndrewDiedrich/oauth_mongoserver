@@ -29,22 +29,18 @@ passport.use(
             callbackURL: '/auth/google/callback', //user coming back from google
             proxy: true
         },
-        (accessToken, refreshToken, profile, done) => {
-            User.findOne({ googleId: profile.id })
-                .then((existingUser) => { //promise
-                    if (existingUser) {
-                        //we already have record
-                        done(null, existingUser) //null is error object, so no error, and then user record. tells passport were done hers the suer record
-                    } else {
-                        //make new record if no record
-                        new User({ googleId: profile.id }) //creates instance of user and save to DB
-                            .save()
-                            .then(user => done(null, user));
-                    }
-                })
-                // console.log('access token', accessToken); //allow to read emails, info
-                // console.log('refresh token', refreshToken); //allows to update get access token after it expires.
-                // console.log('profile', profile);
-        }
+        async(accessToken, refreshToken, profile, done) => {
+            const existingUser = await User.findOne({ googleId: profile.id })
+
+            if (existingUser) {
+                //we already have record
+                return done(null, existingUser) //null is error object, so no error, and then user record. tells passport were done hers the suer record
+            }   //make new record if no record
+                const user = await new User({ googleId: profile.id }).save() //creates instance of user and save to DB 
+                done(null, user);
+            }
+            // console.log('access token', accessToken); //allow to read emails, info
+            // console.log('refresh token', refreshToken); //allows to update get access token after it expires.
+            // console.log('profile', profile);
     )
 );
